@@ -8,7 +8,6 @@ function [model, energy] = linRegVb(X, t, prior)
 %   model: trained model structure
 %   energy: variational lower bound
 % Written by Mo Chen (sth4nth@gmail.com).
-[m,n] = size(X);
 if nargin < 3
     a0 = 1e-4;
     b0 = 1e-4;
@@ -20,6 +19,7 @@ else
     c0 = prior.c;
     d0 = prior.d;
 end
+[m,n] = size(X);
 I = eye(m);
 xbar = mean(X,2);
 tbar = mean(t,2);
@@ -46,14 +46,14 @@ for iter = 2:maxiter
     KLw = -sum(log(diag(U)));        
 %     q(alpha)
     w2 = dot(Ew,Ew);
-    invU = U\I;   
+    invU = U'\I;   
     trS = dot(invU(:),invU(:));
     b = b0+0.5*(w2+trS);                      % 10.95
     Ealpha = a/b;                              % 10.102
     KLalpha = -a*log(b);
 %     q(beta)
     e2 = sum((t-Ew'*X).^2);    
-    invUX = U\X;
+    invUX = U'\X;
     trXSX = dot(invUX(:),invUX(:));
     d = d0+0.5*(e2+trXSX);
     Ebeta = c/d; 
